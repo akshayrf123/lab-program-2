@@ -1,13 +1,10 @@
 class Holder:
-    factors = {}  # Initialize an empty dictionary
-    attributes = ()  # declaration of dictionaries parameters with an arbitrary length
+    factors = {}  
+    attributes = () 
 
-    '''
-    Constructor of class Holder holding two parameters, 
-    self refers to the instance of the class
-    '''
+  
 
-    def __init__(self, attr):  #
+    def __init__(self, attr):  
         self.attributes = attr
         for i in attr:
             self.factors[i] = []
@@ -17,8 +14,8 @@ class Holder:
 
 
 class CandidateElimination:
-    Positive = {}  # Initialize positive empty dictionary
-    Negative = {}  # Initialize negative empty dictionary
+    Positive = {}  
+    Negative = {}  
 
     def __init__(self, data, fact):
         self.num_factors = len(data[0][0])
@@ -26,24 +23,19 @@ class CandidateElimination:
         self.attr = fact.attributes
         self.dataset = data
 
-        # print self.attr
+        
 
     def run_algorithm(self):
-        #        print self.dataset
-        '''
-        Initialize the specific and general boundaries, and loop the dataset against the algorithm
-        '''
+       
         G = self.initializeG()
         S = self.initializeS()
 
-        '''
-        Programmatically populate list in the iterating variable trial_set 
-        '''
+       
         count = 0
         for trial_set in self.dataset:
-            if self.is_positive(trial_set):  # if trial set/example consists of positive examples
-                G = self.remove_inconsistent_G(G, trial_set[0])  # remove inconsitent data from the general boundary
-                S_new = S[:]  # initialize the dictionary with no key-value pair
+            if self.is_positive(trial_set):
+                G = self.remove_inconsistent_G(G, trial_set[0]) 
+                S_new = S[:] 
                 print(S_new)
                 for s in S:
                     if not self.consistent(s, trial_set[0]):
@@ -56,9 +48,9 @@ class CandidateElimination:
                     S = self.remove_more_general(S)
 
                     print(S)
-            else:  # if it is negative
-                S = self.remove_inconsistent_S(S, trial_set[0])  # remove inconsitent data from the specific boundary
-                G_new = G[:]  # initialize the dictionary with no key-value pair (dataset can take any value)
+            else:  
+                S = self.remove_inconsistent_S(S, trial_set[0])  
+                G_new = G[:]  
                 print(G_new)
                 for g in G:
                     if self.consistent(g, trial_set[0]):
@@ -75,13 +67,13 @@ class CandidateElimination:
         print(G)
 
     def initializeS(self):
-        ''' Initialize the specific boundary '''
-        S = tuple(['-' for factor in range(self.num_factors)])  # 6 constraints in the vector
+        
+        S = tuple(['-' for factor in range(self.num_factors)])  
         return [S]
 
     def initializeG(self):
-        ''' Initialize the general boundary '''
-        G = tuple(['?' for factor in range(self.num_factors)])  # 6 constraints in the vector
+        
+        G = tuple(['?' for factor in range(self.num_factors)])  
         return [G]
 
     def is_positive(self, trial_set):
@@ -94,7 +86,7 @@ class CandidateElimination:
             raise TypeError("invalid target value")
 
     def is_negative(self, trial_set):
-        ''' Check if a given training trial_set is negative '''
+        
         if trial_set[1] == 'No':
             return False
         elif trial_set[1] == 'Yes':
@@ -103,9 +95,7 @@ class CandidateElimination:
             raise TypeError("invalid target value")
 
     def match_factor(self, value1, value2):
-        ''' Check for the factors values match,
-            necessary while checking the consistency of 
-            training trial_set with the hypothesis '''
+        
         if value1 == '?' or value2 == '?':
             return True
         elif value1 == value2:
@@ -113,15 +103,14 @@ class CandidateElimination:
         return False
 
     def consistent(self, hypothesis, instance):
-        ''' Check whether the instance is part of the hypothesis '''
+        
         for i, factor in enumerate(hypothesis):
             if not self.match_factor(factor, instance[i]):
                 return False
         return True
 
     def remove_inconsistent_G(self, hypotheses, instance):
-        ''' For a positive trial_set, the hypotheses in G
-            inconsistent with it should be removed '''
+        
         G_new = hypotheses[:]
         for g in hypotheses:
             if not self.consistent(g, instance):
@@ -129,8 +118,7 @@ class CandidateElimination:
         return G_new
 
     def remove_inconsistent_S(self, hypotheses, instance):
-        ''' For a negative trial_set, the hypotheses in S
-            inconsistent with it should be removed '''
+        
         S_new = hypotheses[:]
         for s in hypotheses:
             if self.consistent(s, instance):
@@ -138,8 +126,7 @@ class CandidateElimination:
         return S_new
 
     def remove_more_general(self, hypotheses):
-        '''  After generalizing S for a positive trial_set, the hypothesis in S
-        general than others in S should be removed '''
+       
         S_new = hypotheses[:]
         for old in hypotheses:
             for new in S_new:
@@ -148,8 +135,7 @@ class CandidateElimination:
         return S_new
 
     def remove_more_specific(self, hypotheses):
-        ''' After specializing G for a negative trial_set, the hypothesis in G
-        specific than others in G should be removed '''
+        
         G_new = hypotheses[:]
         for old in hypotheses:
             for new in G_new:
@@ -158,22 +144,20 @@ class CandidateElimination:
         return G_new
 
     def generalize_inconsistent_S(self, hypothesis, instance):
-        ''' When a inconsistent hypothesis for positive trial_set is seen in the specific boundary S,
-            it should be generalized to be consistent with the trial_set ... we will get one hypothesis'''
-        hypo = list(hypothesis)  # convert tuple to list for mutability
+      
+        hypo = list(hypothesis)  
         for i, factor in enumerate(hypo):
             if factor == '-':
                 hypo[i] = instance[i]
             elif not self.match_factor(factor, instance[i]):
                 hypo[i] = '?'
-        generalization = tuple(hypo)  # convert list back to tuple for immutability
+        generalization = tuple(hypo)  
         return generalization
 
     def specialize_inconsistent_G(self, hypothesis, instance):
-        ''' When a inconsistent hypothesis for negative trial_set is seen in the general boundary G
-            should be specialized to be consistent with the trial_set.. we will get a set of hypotheses '''
+        
         specializations = []
-        hypo = list(hypothesis)  # convert tuple to list for mutability
+        hypo = list(hypothesis)  .
         for i, factor in enumerate(hypo):
             if factor == '?':
                 values = self.factors[self.attr[i]]
@@ -181,14 +165,12 @@ class CandidateElimination:
                     if instance[i] != j:
                         hyp = hypo[:]
                         hyp[i] = j
-                        hyp = tuple(hyp)  # convert list back to tuple for immutability
+                        hyp = tuple(hyp)  
                         specializations.append(hyp)
         return specializations
 
     def get_general(self, generalization, G):
-        ''' Checks if there is more general hypothesis in G
-            for a generalization of inconsistent hypothesis in S
-            in case of positive trial_set and returns valid generalization '''
+       
 
         for g in G:
             if self.more_general(g, generalization):
@@ -196,10 +178,7 @@ class CandidateElimination:
         return None
 
     def get_specific(self, specializations, S):
-        ''' Checks if there is more specific hypothesis in S
-            for each of hypothesis in specializations of an
-            inconsistent hypothesis in G in case of negative trial_set
-            and return the valid specializations'''
+        
         valid_specializations = []
         for hypo in specializations:
             for s in S:
@@ -208,8 +187,7 @@ class CandidateElimination:
         return valid_specializations
 
     def exists_general(self, hypothesis, G):
-        '''Used to check if there exists a more general hypothesis in
-            general boundary for version space'''
+        
 
         for g in G:
             if self.more_general(g, hypothesis):
@@ -217,20 +195,17 @@ class CandidateElimination:
         return False
 
     def exists_specific(self, hypothesis, S):
-        '''Used to check if there exists a more specific hypothesis in
-            general boundary for version space'''
-
+        
         for s in S:
             if self.more_specific(s, hypothesis):
                 return True
         return False
 
     def get_version_space(self, specific, general, VS=None):
-        ''' Given the specific and the general boundary of the
-            version space, evaluate the version space in between '''
+       
         while self.get_order(VS):
             for hypothesis in VS[:]:
-                hypo = list(hypothesis)  # convert tuple to list for mutability
+                hypo = list(hypothesis)  
                 for i, factor in enumerate(hypo):
                     if factor != '?':
                         hyp = hypo[:]
@@ -244,7 +219,7 @@ class CandidateElimination:
         pass
 
     def more_general(self, hyp1, hyp2):
-        ''' Check whether hyp1 is more general than hyp2 '''
+       
         hyp = list(zip(hyp1, hyp2))
         for i, j in hyp:
             if i == '?':
@@ -259,14 +234,13 @@ class CandidateElimination:
         return True
 
     def more_specific(self, hyp1, hyp2):
-        ''' hyp1 more specific than hyp2 is
-            equivalent to hyp2 being more general than hyp1 '''
+        
         return self.more_general(hyp2, hyp1)
 
 
 import csv
 
-# !usr/bin/python
+
 hypo = ['%', '%', '%', '%', '%', '%'];
 with open('Training_examples.csv') as csv_file:
     readcsv = csv.reader(csv_file, delimiter=',')
@@ -296,16 +270,15 @@ with open('Training_examples.csv') as csv_file:
         del l2
 print(lr)
 
-# dataset=[(('sunny','warm','normal','strong','warm','same'),'Y'),(('sunny','warm','high','strong','warm','same'),'Y'),(('rainy','cold','high','strong','warm','change'),'N'),(('sunny','warm','high','strong','cool','change'),'Y')]
-# print((dataset[0][1]))
+
 attributes = ('Sky', 'Temp', 'Humidity', 'Wind', 'Water', 'Forecast')
 
 f = Holder(attributes)
-f.add_values('Sky', ('sunny', 'rainy', 'cloudy'))  # sky can be sunny rainy or cloudy
-f.add_values('Temp', ('cold', 'warm'))  # Temp can be sunny cold or warm
-f.add_values('Humidity', ('normal', 'high'))  # Humidity can be normal or high
-f.add_values('Wind', ('weak', 'strong'))  # wind can be weak or strong
-f.add_values('Water', ('warm', 'cold'))  # water can be warm or cold
-f.add_values('Forecast', ('same', 'change'))  # Forecast can be same or change
-a = CandidateElimination(lr, f)  # pass the dataset to the algorithm class and call the run algoritm method
+f.add_values('Sky', ('sunny', 'rainy', 'cloudy'))  
+f.add_values('Temp', ('cold', 'warm')) 
+f.add_values('Humidity', ('normal', 'high'))  
+f.add_values('Wind', ('weak', 'strong'))  
+f.add_values('Water', ('warm', 'cold'))  
+f.add_values('Forecast', ('same', 'change'))  
+a = CandidateElimination(lr, f)  
 a.run_algorithm()
